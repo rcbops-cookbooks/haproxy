@@ -40,6 +40,30 @@ service "haproxy" do
   action [ :enable, :start ]
 end
 
+options = {}
+node["openstack"]["services"].each do |svc|
+  name = "#{svc.namespace}-#{svc.service}"
+  options[name] = {}
+  endpoint = get_access_endpoint(svc.role, svc.namespace, svc.service)
+  options[name]["listen_port"] = endpoint["port"]
+  server_list = get_realserver_endpoints(svc.role, svc.namespace, svc.service)
+  server_list.each do |server|
+    # Collect each server into the array
+    tmp_hash = {"host" => server["host"], "port" => server["port"]}
+    options[name]["servers"] << tmp_hash
+  end
+end
+
+#options = {
+#  "nova-api" => {
+#    "listen_port" => "8774",
+#    "servers" => [
+#      {"name" => "foo1", "host": "x.x.x.x", "port" => "8774"},
+#      {"name" => "foo2", "host": "y.y.y.y", "port" => "8774"}
+#    ]
+#  }
+#}
+
 template "/etc/haproxy/haproxy.cfg" do
   source "haproxy.cfg.erb"
   owner "root"

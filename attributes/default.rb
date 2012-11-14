@@ -1,7 +1,22 @@
 default["haproxy"]["admin_port"] = 8080
 
-default["openstack"]["services"] = [ "nova.services.api", "keystone.services.admin-api", "keystone.services.service-api"]
-
+default["openstack"]["services"] = [
+  {
+    "role" => "nova-api-os-compute",
+    "namespace" => "nova",
+    "service" => "api"
+  },
+  {
+    "role" => "keystone",
+    "namespace" => "keystone",
+    "service" => "admin-api"
+  },
+  {
+    "role" => "keystone",
+    "namespace" => "keystone",
+    "service" => "service-api"
+  }
+]
 
 case platform
 when "fedora", "redhat", "centos"
