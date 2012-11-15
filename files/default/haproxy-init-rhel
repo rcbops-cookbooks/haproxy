@@ -30,6 +30,8 @@ CONFIG=/etc/haproxy/haproxy.cfg
 CONFIG_DIR=/etc/haproxy/haproxy.d/
 
 declare -a config_files
+
+# add everything under $CONFIG_DIR
 if [ -d ${CONFIG_DIR} ] ; then
     for i in $(ls "${CONFIG_DIR}") ; do
         i=$(readlink -f "${i}")
@@ -37,6 +39,7 @@ if [ -d ${CONFIG_DIR} ] ; then
     done
 fi
 
+# add the parent config file
 config_files=("-f" "${CONFIG}" "${config_files[@]}")
 
 check() {
@@ -49,7 +52,7 @@ start() {
         echo "Errors in configuration file, check with $prog check."
         return 1
     fi
- 
+
     echo -n $"Starting $prog: "
     # start it up here, usually something like "daemon $exec"
     daemon $exec -D ${config_files[@]} -p /var/run/$prog.pid
@@ -62,7 +65,7 @@ start() {
 stop() {
     echo -n $"Stopping $prog: "
     # stop it here, often "killproc $prog"
-    killproc $prog 
+    killproc $prog
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile

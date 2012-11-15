@@ -25,12 +25,17 @@ test -x $HAPROXY || exit 0
 test -f "$CONFIG" || exit 0
 
 declare -a config_files
-for i in $(ls -1 "${CONFIG_DIR}") ; do 
-    config_files=("-f" "${i}" "${config_files[@]}")
-done
-config_files=("-f" "${CONFIG}" "${config_files[@]}")
 
-echo "${config_files[@]}"
+# add everything under $CONFIG_DIR
+if [ -d ${CONFIG_DIR} ] ; then
+    for i in $(ls "${CONFIG_DIR}") ; do
+        i=$(readlink -f "${i}")
+        config_files=("-f" "${i}" "${config_files[@]}")
+    done
+fi
+
+# add the parent config file
+config_files=("-f" "${CONFIG}" "${config_files[@]}")
 
 if [ -e /etc/default/haproxy ]; then
     . /etc/default/haproxy
