@@ -34,6 +34,24 @@ template "/etc/default/haproxy" do
   only_if { platform?("ubuntu","debian") }
 end
 
+directory "/etc/haproxy/haproxy.d" do
+  mode 600
+  owner root
+  group root
+end
+
+cookbook_file "/etc/init.d/haproxy" do
+  if platform?(%w{fedora redhat centos})
+    source "haproxy-init-rhel"
+  if platform?(%w{ubuntu debian})
+   source "haproxy-init-ubuntu"
+  end
+
+  mode 0644
+  owner root
+  group root
+end
+
 service "haproxy" do
   service_name platform_options["haproxy_service"]
   supports :status => true, :restart => true, :status => true, :reload => true
