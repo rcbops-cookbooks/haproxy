@@ -43,6 +43,7 @@ end
 cookbook_file "/etc/init.d/haproxy" do
   if platform?(%w{fedora redhat centos})
     source "haproxy-init-rhel"
+  end
   if platform?(%w{ubuntu debian})
    source "haproxy-init-ubuntu"
   end
