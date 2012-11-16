@@ -26,6 +26,9 @@ def initialize(*args)
   @action = :create
 end
 
+attribute :role, :kind_of => String
+attribute :namespace, :kind_of => String
+attribute :service, :kind_of => String
 #attribute :servers, :kind_of => Hash
 #attribute :listen_port, :kind_of => String
 #attribute :port, :kind_of => String

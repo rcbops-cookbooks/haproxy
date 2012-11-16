@@ -19,27 +19,23 @@
 #
 
 action :create do
-
   name = new_resource.name
-  svc = node['openstack']['services'][name]
-  servers = {}
-  
-  endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
+  role = new_resource.role
+  namespace = new_resource.namespace
+  service = new_resource.service
+
+  endpoint = get_access_endpoint(role, namespace, service)
   if not endpoint.nil?
     listen_port = endpoint['port']
-    server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
-    backend = 1
-    server_list.each do |server|
-      # push each server into the has
-      servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
-      backend += 1
-    end
-  
+    servers = {}
+    server_list = get_realserver_endpoints(role, namespace, service)
+    servers = server_list.each.inject([]) {|output, k| output << [k['host'],k['port']].join(":") }
+
     template getPath do
-    source "haproxy-new.cfg.erb"
-    owner "root"
-    group "root"
-    mode "0644"
+      source "haproxy-new.cfg.erb"
+      owner "root"
+      group "root"
+      mode "0644"
       variables(
         :name => name,
         :listen => "0.0.0.0",
@@ -47,9 +43,10 @@ action :create do
         :listen_port => listen_port)
     end
     new_resource.updated_by_last_action(true)
+  else
+    new_resource.updated_by_last_action(false)
   end
 end
-
 
 action :delete do
   file getPath do

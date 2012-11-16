@@ -1,6 +1,6 @@
 listen  <%= @name %> <%= @listen %>:<%= @listen_port %>
     balance leastconn
     option forwardfor
-<% @servers.each do |k, v| %>
-    <%=    "server #{k} #{v['host']}:#{v['port']} check" %>
+<% @servers.each_with_index do |server, idx| %>
+    <%=    "server #{@name}-#{idx} #{server} check" %>
 <% end %>

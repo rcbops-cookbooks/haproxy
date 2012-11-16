@@ -71,12 +71,23 @@ template "/etc/haproxy/haproxy.cfg" do
   notifies :restart, resources(:service => "haproxy"), :immediately
 end
 
-node['openstack']['services'].each_key do |name|
-  oshaproxy_configalt "#{name}" do
+node['openstack']['services'].each do |svc|
+  svc_name = [ svc['namespace'], svc['service'] ].join("-")
+  oshaproxy_configalt svc_name do
+    role svc['role']
+    service svc['service']
+    namespace svc['namespace']
     action :create
-    notifies :reload, resources(:service => "haproxy"), :immediately
+    notifies :reload, resources(:service => "haproxy"), :delayed
   end
 end
+
+#node['openstack']['services'].each_key do |name|
+#  oshaproxy_configalt "#{name}" do
+#    action :create
+#    notifies :reload, resources(:service => "haproxy"), :immediately
+#  end
+#end
 
 #### to add an individual service config:
 
