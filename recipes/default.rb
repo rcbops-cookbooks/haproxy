@@ -112,7 +112,7 @@ end
 #  end
 
 
-node['openstack']['services'].each do |name, values|
+node['openstack']['services'].each_key do |name|
   oshaproxy_configalt "#{name}" do
     action :create
     notifies :reload, resources(:service => "haproxy"), :immediately

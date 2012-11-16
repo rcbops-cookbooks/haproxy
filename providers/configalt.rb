@@ -17,12 +17,10 @@
 # limitations under the License.
 #
 #
-require 'osops-utils/libraries/ip_location.rb'
 
 action :create do
 
   name = new_resource.name
-
   svc = node['openstack']['services'][name]
   servers = {}
   endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
