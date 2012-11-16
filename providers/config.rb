@@ -32,6 +32,7 @@ action :create do
       :servers => servers,
       :listen_port => new_resource.listen_port)
   end
+  new_resource.updated_by_last_action(true)
 end
 
 

@@ -118,7 +118,7 @@ node['openstack']['services'].each do |svc|
     servers servers
     listen "0.0.0.0"
     listen_port listen_port
-    notifies :restart, resources(:service => "haproxy"), :immediately
+    notifies :reload, resources(:service => "haproxy"), :immediately
   end
 end
 
