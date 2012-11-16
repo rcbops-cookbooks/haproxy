@@ -23,28 +23,31 @@ action :create do
   name = new_resource.name
   svc = node['openstack']['services'][name]
   servers = {}
+  
   endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
-  listen_port = endpoint['port']
-  server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
-  backend = 1
-  server_list.each do |server|
-    # push each server into the has
-    servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
-    backend += 1
+  if not endpoint.nil?
+    listen_port = endpoint['port']
+    server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
+    backend = 1
+    server_list.each do |server|
+      # push each server into the has
+      servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
+      backend += 1
+    end
+  
+    template getPath do
+    source "haproxy-new.cfg.erb"
+    owner "root"
+    group "root"
+    mode "0644"
+      variables(
+        :name => name,
+        :listen => "0.0.0.0",
+        :servers => servers,
+        :listen_port => listen_port)
+    end
+    new_resource.updated_by_last_action(true)
   end
-
-  template getPath do
-  source "haproxy-new.cfg.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-    variables(
-      :name => name,
-      :listen => "0.0.0.0",
-      :servers => servers,
-      :listen_port => listen_port)
-  end
-  new_resource.updated_by_last_action(true)
 end
 
 

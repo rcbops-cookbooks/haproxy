@@ -6,6 +6,16 @@ default["openstack"]["services"] = {
     "namespace" => "nova",
     "service" => "api"
   },
+  "nova-ec2-admin" => {
+    "role" => "nova-api-ec2",
+    "namespace" => "nova",
+    "service" => "ec2-admin"
+  },
+  "nova-ec2-public" => {
+    "role" => "nova-api-ec2",
+    "namespace" => "nova",
+    "service" => "ec2-public"
+  },
   "keystone-admin-api" => {
     "role" => "keystone",
     "namespace" => "keystone",
@@ -15,6 +25,16 @@ default["openstack"]["services"] = {
     "role" => "keystone",
     "namespace" => "keystone",
     "service" => "service-api"
+  },
+  "glance-api" => {
+    "role" => "glance-api",
+    "namespace" => "glance",
+    "service" => "api"
+  },
+  "cinder-api" => {
+    "role" => "cinder-api",
+    "namespace" => "cinder",
+    "service" => "volume"
   }
 }
 
