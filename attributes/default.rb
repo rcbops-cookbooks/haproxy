@@ -29,6 +29,6 @@ when "ubuntu", "debian"
   default["haproxy"]["platform"] = {
     "haproxy_packages" => [ "haproxy" ],
     "haproxy_service" => "haproxy",
-    "package_options" => "-o Dpkg::Options::='--force-confold' -o Dpkg::Options::='--force-confdef'"
+    "package_options" => "--force-yes -o Dpkg::Options::='--force-confold' -o Dpkg::Options::='--force-confdef'"
   }
 end

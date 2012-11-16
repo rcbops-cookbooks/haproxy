@@ -35,9 +35,9 @@ template "/etc/default/haproxy" do
 end
 
 directory "/etc/haproxy/haproxy.d" do
-  mode 600
-  owner root
-  group root
+  mode 0655
+  owner "root"
+  group "root"
 end
 
 cookbook_file "/etc/init.d/haproxy" do
@@ -48,9 +48,9 @@ cookbook_file "/etc/init.d/haproxy" do
    source "haproxy-init-ubuntu"
   end
 
-  mode 0644
-  owner root
-  group root
+  mode 0655
+  owner "root"
+  group "root"
 end
 
 service "haproxy" do
@@ -59,19 +59,19 @@ service "haproxy" do
   action [ :enable, :start ]
 end
 
-options = {}
-node["openstack"]["services"].each do |svc|
-  name = "#{svc.namespace}-#{svc.service}"
-  options[name] = {}
-  endpoint = get_access_endpoint(svc.role, svc.namespace, svc.service)
-  options[name]["listen_port"] = endpoint["port"]
-  server_list = get_realserver_endpoints(svc.role, svc.namespace, svc.service)
-  server_list.each do |server|
-    # Collect each server into the array
-    tmp_hash = {"host" => server["host"], "port" => server["port"]}
-    options[name]["servers"] << tmp_hash
-  end
-end
+#options = {}
+#node["openstack"]["services"].each do |svc|
+#  name = "#{svc.namespace}-#{svc.service}"
+#  options[name] = {}
+#  endpoint = get_access_endpoint(svc.role, svc.namespace, svc.service)
+#  options[name]["listen_port"] = endpoint["port"]
+#  server_list = get_realserver_endpoints(svc.role, svc.namespace, svc.service)
+#  server_list.each do |server|
+#    # Collect each server into the array
+#    tmp_hash = {"host" => server["host"], "port" => server["port"]}
+#    options[name]["servers"] << tmp_hash
+#  end
+#end
 
 #options = {
 #  "nova-api" => {
@@ -92,4 +92,25 @@ template "/etc/haproxy/haproxy.cfg" do
     "admin_port" => node["haproxy"]["admin_port"]
   )
   notifies :restart, resources(:service => "haproxy"), :immediately
+end
+
+oshaproxy_config "nova-api" do
+  action :create
+  servers(
+      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
+      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
+  )
+  listen "0.0.0.0"
+  listen_port "4567"
+end
+
+
+oshaproxy_config "ec2-api" do
+  action :create
+  servers(
+      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
+      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
+  )
+  listen "0.0.0.0"
+  listen_port "4568"
 end

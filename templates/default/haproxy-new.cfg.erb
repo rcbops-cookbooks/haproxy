@@ -1,0 +1,6 @@
+listen  <%= @name %> <%= @listen %>:<%= @listen_port %>
+    balance leastconn
+    option forwardfor
+<% @servers.each do |k, v| %>
+    <%=    "server #{k} #{v['host']}:#{v['port']} check" %>
+<% end %>
