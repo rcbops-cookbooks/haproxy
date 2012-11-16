@@ -98,26 +98,23 @@ end
 
 # iterate through the services in the attributes file
 # and create a config with all the discovered listening servers
-node['openstack']['services'].each do |svc|
-  servers = {}
-  name = "#{svc['namespace']}-#{svc['service']}"
-  endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
-  listen_port = endpoint['port']
-  server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
-  backend = 1
-  server_list.each do |server|
-    # push each server into the has
-    servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
-    backend += 1
-  end
+#node['openstack']['services'].each do |svc|
+#  servers = {}
+#  name = "#{svc['namespace']}-#{svc['service']}"
+#  endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
+#  listen_port = endpoint['port']
+#  server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
+#  backend = 1
+#  server_list.each do |server|
+#    # push each server into the has
+#    servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
+#    backend += 1
+#  end
 
 
-  # create the config file for this service
-  oshaproxy_config "#{name}" do
+node['openstack']['services'].each do |name, values|
+  oshaproxy_configalt "#{name}" do
     action :create
-    servers servers
-    listen "0.0.0.0"
-    listen_port listen_port
     notifies :reload, resources(:service => "haproxy"), :immediately
   end
 end
