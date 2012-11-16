@@ -1,5 +1,6 @@
 #
 # Cookbook Name:: openstack-haproxy
+# w
 # Recipe:: default
 #
 # Copyright 2012, Rackspace US, Inc.
@@ -76,10 +77,10 @@ end
 #options = {
 #  "nova-api" => {
 #    "listen_port" => "8774",
-#    "servers" => [
-#      {"name" => "foo1", "host": "x.x.x.x", "port" => "8774"},
-#      {"name" => "foo2", "host": "y.y.y.y", "port" => "8774"}
-#    ]
+#    "servers" => {
+#      {"name" => "foo1", "host" => "x.x.x.x", "port" => "8774"},
+#      {"name" => "foo2", "host" => "y.y.y.y", "port" => "8774"}
+#    }
 #  }
 #}
 
@@ -94,23 +95,49 @@ template "/etc/haproxy/haproxy.cfg" do
   notifies :restart, resources(:service => "haproxy"), :immediately
 end
 
-oshaproxy_config "nova-api" do
-  action :create
-  servers(
-      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
-      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
-  )
-  listen "0.0.0.0"
-  listen_port "4567"
-end
+
+# iterate through the services in the attributes file
+# and create a config with all the discovered listening servers
+node['openstack']['services'].each do |svc|
+  servers = {}
+  name = "#{svc['namespace']}-#{svc['service']}"
+  endpoint = get_access_endpoint(svc['role'], svc['namespace'], svc['service'])
+  listen_port = endpoint['port']
+  server_list = get_realserver_endpoints(svc['role'], svc['namespace'], svc['service'])
+  backend = 1
+  server_list.each do |server|
+    # push each server into the has
+    servers["#{name}-#{backend}"] = {"host" => server["host"], "port" => server["port"]}
+    backend += 1
+  end
 
 
-oshaproxy_config "ec2-api" do
-  action :create
-  servers(
-      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
-      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
-  )
-  listen "0.0.0.0"
-  listen_port "4568"
+  # create the config file for this service
+  oshaproxy_config "#{name}" do
+    action :create
+    servers servers
+    listen "0.0.0.0"
+    listen_port listen_port
+    notifies :restart, resources(:service => "haproxy"), :immediately
+  end
 end
+
+#### to add an individual service config:
+
+#oshaproxy_config "ec2-api" do
+#  action :create
+#  servers(
+#      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
+#      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
+#  )
+#  listen "0.0.0.0"
+#  listen_port "4568"
+#  notifies :restart, resources(:service => "haproxy"), :immediately
+#end
+
+#### to delete an individual service config
+
+#oshaproxy_config "some-api" do
+#  action :delete
+#  notifies :restart, resources(:service => "haproxy"), :immediately
+#end

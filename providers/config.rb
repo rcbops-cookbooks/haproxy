@@ -21,7 +21,7 @@ action :create do
 
   servers = new_resource.servers
 
-  template "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg" do
+  template getPath do
   source "haproxy-new.cfg.erb"
   owner "root"
   group "root"
@@ -35,16 +35,14 @@ action :create do
 end
 
 
-#action :delete do
-#  file getPath do
-#    action :delete
-#  end
-#  new_resource.updated_by_last_action(true)
-#end
-
-
+action :delete do
+  file getPath do
+    action :delete
+  end
+  new_resource.updated_by_last_action(true)
+end
 
 private
 def getPath
-  return new_resource.path ? new_resource.path : "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg"
+  return "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg"
 end

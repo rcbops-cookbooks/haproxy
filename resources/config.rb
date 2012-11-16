@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-actions :create
+actions :create, :delete
 
 # In earlier versions of Chef the LWRP DSL doesn't support specifying
 # a default action, so you need to drop into Ruby.
