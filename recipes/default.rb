@@ -86,8 +86,9 @@ node['openstack']['services'].each do |svc|
 
   if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
     # if we have passed in a separate host value for the endpoint, we must
-    # be load balancing so let's first delete
+    # be load balancing so let's:
 
+    # delete the Endpoint
     keystone_register "Delete Endpoint" do
       auth_host ks_admin_endpoint["host"]
       auth_port ks_admin_endpoint["port"]
@@ -118,7 +119,7 @@ node['openstack']['services'].each do |svc|
       auth_protocol ks_admin_endpoint["scheme"]
       api_ver ks_admin_endpoint["path"]
       auth_token keystone["admin_token"]
-      service_type service_type 
+      service_type service_type
       endpoint_region node["nova"]["compute"]["region"]
       endpoint_adminurl admin_endpoint["uri"]
       endpoint_internalurl public_endpoint["uri"]
@@ -128,7 +129,7 @@ node['openstack']['services'].each do |svc|
 
     # create the haproxy config files
     svc_name = [ svc['namespace'], svc['service'] ].join("-")
-    oshaproxy_configalt svc_name do
+    oshaproxy_config svc_name do
       role role
       service service
       namespace namespace
@@ -138,33 +139,10 @@ node['openstack']['services'].each do |svc|
   end
 end
 
-
-# since we're running a lb now, let's assume we want a new endpoint for our
-# service(s)
-
-
-# assuming we have been passed an arbitrary IP to use for the service endpoint
-# and assuming that IP exists on this lb/lb pair
-#
-
-
-
-
-
-
-
-
-
-#node['openstack']['services'].each_key do |name|
-#  oshaproxy_configalt "#{name}" do
-#    action :create
-#    notifies :reload, resources(:service => "haproxy"), :immediately
-#  end
-#end
-
 #### to add an individual service config:
+#NOTE(mancdaz): move this into doc
 
-#oshaproxy_config "ec2-api" do
+#oshaproxy_configsingle "ec2-api" do
 #  action :create
 #  servers(
 #      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},

@@ -16,25 +16,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+#
 
 action :create do
+  name = new_resource.name
+  role = new_resource.role
+  namespace = new_resource.namespace
+  service = new_resource.service
 
-  servers = new_resource.servers
+  endpoint = get_access_endpoint(role, namespace, service)
+  if not endpoint.nil?
+    listen_port = endpoint['port']
+    servers = {}
+    server_list = get_realserver_endpoints(role, namespace, service)
+    log(server_list)
+    servers = server_list.each.inject([]) {|output, k| output << [k['host'],k['port']].join(":") }
 
-  template getPath do
-  source "haproxy-new.cfg.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-    variables(
-      :name => new_resource.name,
-      :listen => new_resource.listen,
-      :servers => servers,
-      :listen_port => new_resource.listen_port)
+    template getPath do
+      source "haproxy-new.cfg.erb"
+      owner "root"
+      group "root"
+      mode "0644"
+      variables(
+        :name => name,
+        :listen => "0.0.0.0",
+        :servers => servers,
+        :listen_port => listen_port)
+    end
+    new_resource.updated_by_last_action(true)
+  else
+    new_resource.updated_by_last_action(false)
   end
-  new_resource.updated_by_last_action(true)
 end
-
 
 action :delete do
   file getPath do
