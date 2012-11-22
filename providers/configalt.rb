@@ -29,6 +29,7 @@ action :create do
     listen_port = endpoint['port']
     servers = {}
     server_list = get_realserver_endpoints(role, namespace, service)
+    log(server_list)
     servers = server_list.each.inject([]) {|output, k| output << [k['host'],k['port']].join(":") }
 
     template getPath do

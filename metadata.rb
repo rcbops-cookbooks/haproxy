@@ -8,6 +8,6 @@ version           "1.0.0"
   supports os
 end
 
-%w{ apt osops-utils yum }.each do |dep|
+%w{ nova apt osops-utils yum keystone }.each do |dep|
   depends dep
 end

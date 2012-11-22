@@ -4,37 +4,44 @@ default["openstack"]["services"] = [
   {
     "role" => "nova-api-os-compute",
     "namespace" => "nova",
-    "service" => "api"
+    "service" => "api",
+    "service_type" => "compute"
   },
   {
     "role" => "nova-api-ec2",
     "namespace" => "nova",
-    "service" => "ec2-admin"
+    "service" => "ec2-admin",
+    "service_type" => "ec2"
   },
   {
     "role" => "nova-api-ec2",
     "namespace" => "nova",
-    "service" => "ec2-public"
+    "service" => "ec2-public",
+    "service_type" => "ec2"
   },
   {
     "role" => "keystone",
     "namespace" => "keystone",
-    "service" => "admin-api"
+    "service" => "admin-api",
+    "service_type" => "identity"
   },
   {
     "role" => "keystone",
     "namespace" => "keystone",
-    "service" => "service-api"
-  },
-  {
-    "role" => "glance-api",
-    "namespace" => "glance",
-    "service" => "api"
+    "service" => "service-api",
+    "service_type" => "identity"
   },
   {
     "role" => "cinder-api",
     "namespace" => "cinder",
-    "service" => "volume"
+    "service" => "volume",
+    "service_type" => "volume"
+  },
+  {
+    "role" => "glance-api",
+    "namespace" => "glance",
+    "service" => "api",
+    "service_type" => "image"
   }
 ]
 

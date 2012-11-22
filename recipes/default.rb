@@ -71,16 +71,89 @@ template "/etc/haproxy/haproxy.cfg" do
   notifies :restart, resources(:service => "haproxy"), :immediately
 end
 
+
+ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
+ks_service_endpoint = get_access_endpoint("keystone", "keystone", "service-api")
+keystone = get_settings_by_role("keystone","keystone")
+
+
 node['openstack']['services'].each do |svc|
-  svc_name = [ svc['namespace'], svc['service'] ].join("-")
-  oshaproxy_configalt svc_name do
-    role svc['role']
-    service svc['service']
-    namespace svc['namespace']
-    action :create
-    notifies :reload, resources(:service => "haproxy"), :delayed
+
+  role = svc['role']
+  service = svc['service']
+  namespace = svc['namespace']
+  service_type = svc['service_type']
+
+  if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+    # if we have passed in a separate host value for the endpoint, we must
+    # be load balancing so let's first delete
+
+    keystone_register "Delete Endpoint" do
+      auth_host ks_admin_endpoint["host"]
+      auth_port ks_admin_endpoint["port"]
+      auth_protocol ks_admin_endpoint["scheme"]
+      api_ver ks_admin_endpoint["path"]
+      auth_token keystone["admin_token"]
+      service_type service_type
+      action :delete_endpoint
+    end
+
+    # get the proper bind IPs
+    case service_type
+    when "ec2"
+      public_endpoint = get_bind_endpoint("nova", "ec2-public")
+      admin_endpoint = get_bind_endpoint("nova", "ec2-admin")
+    when "identity"
+      public_endpoint = get_bind_endpoint("keystone", "service-api")
+      admin_endpoint = get_bind_endpoint("keystone", "admin-api")
+    else
+      public_endpoint = get_bind_endpoint("#{namespace}", "#{service}")
+      admin_endpoint = get_bind_endpoint("#{namespace}", "#{service}")
+    end
+
+    # recreate the service endpoints
+    keystone_register "Register Endpoint" do
+      auth_host ks_admin_endpoint["host"]
+      auth_port ks_admin_endpoint["port"]
+      auth_protocol ks_admin_endpoint["scheme"]
+      api_ver ks_admin_endpoint["path"]
+      auth_token keystone["admin_token"]
+      service_type service_type 
+      endpoint_region node["nova"]["compute"]["region"]
+      endpoint_adminurl admin_endpoint["uri"]
+      endpoint_internalurl public_endpoint["uri"]
+      endpoint_publicurl public_endpoint["uri"]
+      action :create_endpoint
+    end
+
+    # create the haproxy config files
+    svc_name = [ svc['namespace'], svc['service'] ].join("-")
+    oshaproxy_configalt svc_name do
+      role role
+      service service
+      namespace namespace
+      action :create
+      notifies :reload, resources(:service => "haproxy"), :delayed
+    end
   end
 end
+
+
+# since we're running a lb now, let's assume we want a new endpoint for our
+# service(s)
+
+
+# assuming we have been passed an arbitrary IP to use for the service endpoint
+# and assuming that IP exists on this lb/lb pair
+#
+
+
+
+
+
+
+
+
 
 #node['openstack']['services'].each_key do |name|
 #  oshaproxy_configalt "#{name}" do
