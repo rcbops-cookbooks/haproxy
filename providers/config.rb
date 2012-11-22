@@ -19,7 +19,12 @@
 #
 
 action :create do
-  name = new_resource.name
+  if new_resource.service == "ec2-admin" or new_resource.service == "ec2-public"
+    name = "ec2-api"
+  else
+    name = new_resource.name
+  end
+
   role = new_resource.role
   namespace = new_resource.namespace
   service = new_resource.service
@@ -58,5 +63,9 @@ end
 
 private
 def getPath
-  return "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg"
+  if new_resource.service == "ec2-admin" or new_resource.service == "ec2-public"
+    return "/etc/haproxy/haproxy.d/ec2-api.cfg"
+  else
+    return "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg"
+  end
 end

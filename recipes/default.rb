@@ -84,6 +84,12 @@ node['openstack']['services'].each do |svc|
   namespace = svc['namespace']
   service_type = svc['service_type']
 
+  unless node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+    haproxy_info = get_settings_by_recipe("oshaproxy", "haproxy")
+    log("haproxy info contains #{haproxy_info}")
+    node.set["#{namespace}"]["services"]["#{service}"]["host"] = haproxy_info["host"]
+  end
+
   if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
     # if we have passed in a separate host value for the endpoint, we must
     # be load balancing so let's:
