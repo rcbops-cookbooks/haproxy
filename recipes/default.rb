@@ -84,42 +84,30 @@ node['openstack']['services'].each do |svc|
   namespace = svc['namespace']
   service_type = svc['service_type']
 
+  # fudgy for now to make the endpoint IP be this haproxy node ip
+  # if we have not passed one in in the environment
+
   unless node["#{namespace}"]["services"]["#{service}"].has_key? "host"
     haproxy_info = get_settings_by_recipe("oshaproxy", "haproxy")
-    log("haproxy info contains #{haproxy_info}")
     node.set["#{namespace}"]["services"]["#{service}"]["host"] = haproxy_info["host"]
   end
 
   if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
-    # if we have passed in a separate host value for the endpoint, we must
-    # be load balancing so let's:
-
-    # delete the Endpoint
-    keystone_register "Delete Endpoint" do
-      auth_host ks_admin_endpoint["host"]
-      auth_port ks_admin_endpoint["port"]
-      auth_protocol ks_admin_endpoint["scheme"]
-      api_ver ks_admin_endpoint["path"]
-      auth_token keystone["admin_token"]
-      service_type service_type
-      action :delete_endpoint
-    end
 
     # get the proper bind IPs
     case service_type
     when "ec2"
-      public_endpoint = get_bind_endpoint("nova", "ec2-public")
-      admin_endpoint = get_bind_endpoint("nova", "ec2-admin")
+      public_endpoint = get_env_bind_endpoint("nova", "ec2-public")
+      admin_endpoint = get_env_bind_endpoint("nova", "ec2-admin")
     when "identity"
-      public_endpoint = get_bind_endpoint("keystone", "service-api")
-      admin_endpoint = get_bind_endpoint("keystone", "admin-api")
+      public_endpoint = get_env_bind_endpoint("keystone", "service-api")
+      admin_endpoint = get_env_bind_endpoint("keystone", "admin-api")
     else
-      public_endpoint = get_bind_endpoint("#{namespace}", "#{service}")
-      admin_endpoint = get_bind_endpoint("#{namespace}", "#{service}")
+      public_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
+      admin_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
     end
 
-    # recreate the service endpoints
-    keystone_register "Register Endpoint" do
+    keystone_register "Recreate Endpoint" do
       auth_host ks_admin_endpoint["host"]
       auth_port ks_admin_endpoint["port"]
       auth_protocol ks_admin_endpoint["scheme"]
@@ -130,7 +118,7 @@ node['openstack']['services'].each do |svc|
       endpoint_adminurl admin_endpoint["uri"]
       endpoint_internalurl public_endpoint["uri"]
       endpoint_publicurl public_endpoint["uri"]
-      action :create_endpoint
+      action :recreate_endpoint
     end
 
     # create the haproxy config files

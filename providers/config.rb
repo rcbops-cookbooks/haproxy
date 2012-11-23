@@ -30,6 +30,7 @@ action :create do
   service = new_resource.service
 
   endpoint = get_access_endpoint(role, namespace, service)
+  log(endpoint)
   if not endpoint.nil?
     listen_port = endpoint['port']
     servers = {}
