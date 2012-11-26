@@ -21,13 +21,13 @@ default["openstack"]["services"] = [
     "service_type" => "ec2"
   },
   {
-    "role" => "keystone",
+    "role" => "keystone-api",
     "namespace" => "keystone",
     "service" => "admin-api",
     "service_type" => "identity"
   },
   {
-    "role" => "keystone",
+    "role" => "keystone-api",
     "namespace" => "keystone",
     "service" => "service-api",
     "service_type" => "identity"
