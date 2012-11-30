@@ -87,12 +87,12 @@ node['openstack']['services'].each do |svc|
   # fudgy for now to make the endpoint IP be this haproxy node ip
   # if we have not passed one in in the environment
 
-  unless node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+  unless node[namespace]["services"][service].has_key? "host"
     haproxy_info = get_settings_by_role("haproxy", "haproxy")
-    node.set["#{namespace}"]["services"]["#{service}"]["host"] = haproxy_info["host"]
+    node.set[namespace]["services"][service]["host"] = haproxy_info["host"]
   end
 
-  if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+  if node[namespace]["services"][service].has_key? "host"
 
     # get the proper bind IPs
     case service_type
@@ -103,8 +103,8 @@ node['openstack']['services'].each do |svc|
       public_endpoint = get_env_bind_endpoint("keystone", "service-api")
       admin_endpoint = get_env_bind_endpoint("keystone", "admin-api")
     else
-      public_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
-      admin_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
+      public_endpoint = get_env_bind_endpoint(namespace, service)
+      admin_endpoint = get_env_bind_endpoint(namespace, service)
     end
 
     keystone_register "Recreate Endpoint" do
