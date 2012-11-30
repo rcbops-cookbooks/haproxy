@@ -87,7 +87,7 @@ node['openstack']['services'].each do |svc|
   # fudgy for now to make the endpoint IP be this haproxy node ip
   # if we have not passed one in in the environment
 
-  unless node[namespace]["services"][service].has_key? "host"
+  unless node[namespace]["services"][service].keys.include?("host")
     haproxy_info = get_settings_by_role("haproxy", "haproxy")
     node.set[namespace]["services"][service]["host"] = haproxy_info["host"]
   end
