@@ -87,12 +87,12 @@ node['openstack']['services'].each do |svc|
   # fudgy for now to make the endpoint IP be this haproxy node ip
   # if we have not passed one in in the environment
 
-  unless node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+  unless node[namespace]["services"][service].has_key? "host"
     haproxy_info = get_settings_by_role("haproxy", "haproxy")
-    node.set["#{namespace}"]["services"]["#{service}"]["host"] = haproxy_info["host"]
+    node.set[namespace]["services"][service]["host"] = haproxy_info["host"]
   end
 
-  if node["#{namespace}"]["services"]["#{service}"].has_key? "host"
+  if node[namespace]["services"][service].has_key? "host"
 
     # get the proper bind IPs
     case service_type
@@ -103,8 +103,8 @@ node['openstack']['services'].each do |svc|
       public_endpoint = get_env_bind_endpoint("keystone", "service-api")
       admin_endpoint = get_env_bind_endpoint("keystone", "admin-api")
     else
-      public_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
-      admin_endpoint = get_env_bind_endpoint("#{namespace}", "#{service}")
+      public_endpoint = get_env_bind_endpoint(namespace, service)
+      admin_endpoint = get_env_bind_endpoint(namespace, service)
     end
 
     keystone_register "Recreate Endpoint" do
@@ -123,7 +123,7 @@ node['openstack']['services'].each do |svc|
 
     # create the haproxy config files
     svc_name = [ svc['namespace'], svc['service'] ].join("-")
-    oshaproxy_config svc_name do
+    haproxy_config svc_name do
       role role
       service service
       namespace namespace
@@ -136,7 +136,7 @@ end
 #### to add an individual service config:
 #NOTE(mancdaz): move this into doc
 
-#oshaproxy_configsingle "ec2-api" do
+#haproxy_configsingle "ec2-api" do
 #  action :create
 #  servers(
 #      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
@@ -149,7 +149,7 @@ end
 
 #### to delete an individual service config
 
-#oshaproxy_config "some-api" do
+#haproxy_config "some-api" do
 #  action :delete
 #  notifies :restart, resources(:service => "haproxy"), :immediately
 #end

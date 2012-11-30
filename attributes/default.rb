@@ -35,7 +35,7 @@ default["openstack"]["services"] = [
   {
     "role" => "cinder-api",
     "namespace" => "cinder",
-    "service" => "volume",
+    "service" => "api",
     "service_type" => "volume"
   },
   {
