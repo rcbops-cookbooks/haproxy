@@ -88,8 +88,8 @@ node['openstack']['services'].each do |svc|
   # if we have not passed one in in the environment
 
   unless node[namespace]["services"][service].keys.include?("host")
-    haproxy_info = get_settings_by_role("haproxy", "haproxy")
-    node.set[namespace]["services"][service]["host"] = haproxy_info["host"]
+    haproxy_ip = get_ip_for_net("public", "haproxy")
+    node.set[namespace]["services"][service]["host"] = haproxy_ip
   end
 
   if node[namespace]["services"][service].has_key? "host"
