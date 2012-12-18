@@ -43,12 +43,12 @@ default["openstack"]["services"] = [
     "namespace" => "glance",
     "service" => "api",
     "service_type" => "image"
-#  },
-#  {
-#    "role" => "swift-proxy-server",
-#    "namespace" => "swift",
-#    "service" => "proxy",
-#    "service_type" => "object-store"
+  },
+  {
+    "role" => "swift-proxy-server",
+    "namespace" => "swift",
+    "service" => "proxy",
+    "service_type" => "object-store"
   }
 ]
 
