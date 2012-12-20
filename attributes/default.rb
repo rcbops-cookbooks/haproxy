@@ -1,4 +1,4 @@
-default["haproxy"]["admin_port"] = 8080
+default["haproxy"]["admin_port"] = 8040
 default["haproxy"]["services"]["api"]["host"] = ""       # node_attribute
 
 default["openstack"]["services"] = [
