@@ -22,7 +22,7 @@ platform_options = node["haproxy"]["platform"]
 
 platform_options["haproxy_packages"].each do |pkg|
   package pkg do
-    action :upgrade
+    action :install
     options platform_options["package_options"]
   end
 end
