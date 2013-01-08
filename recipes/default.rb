@@ -75,7 +75,7 @@ end
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 ks_service_endpoint = get_access_endpoint("keystone", "keystone", "service-api")
 keystone = get_settings_by_role("keystone","keystone")
-haproxy_ip = get_ip_for_net("public", "haproxy")
+haproxy_ip = get_ip_for_net("public")
 
 
 node['openstack']['services'].each do |svc|
