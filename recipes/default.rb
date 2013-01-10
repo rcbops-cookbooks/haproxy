@@ -104,6 +104,16 @@ node['openstack']['services'].each do |s|
       admin_endpoint = get_env_bind_endpoint(ns, svc)
     end
 
+    listen_ip = node[ns]["services"][svc]["host"]
+    listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
+    rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
+
+    haproxy_virtual_server "#{ns}-#{svc}" do
+      vs_listen_ip listen_ip
+      vs_listen_port listen_port.to_s
+      real_servers rs_list
+    end
+
     keystone_register "Recreate Endpoint" do
       auth_host ks_admin_endpoint["host"]
       auth_port ks_admin_endpoint["port"]
@@ -116,16 +126,6 @@ node['openstack']['services'].each do |s|
       endpoint_internalurl public_endpoint["uri"]
       endpoint_publicurl public_endpoint["uri"]
       action :recreate_endpoint
-    end
-
-    listen_ip = node[ns]["services"][svc]["host"]
-    listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
-    rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
-
-    haproxy_virtual_server "#{ns}-#{svc}" do
-      vs_listen_ip listen_ip
-      vs_listen_port listen_port.to_s
-      real_servers rs_list
     end
   end
 end
