@@ -71,65 +71,6 @@ template "/etc/haproxy/haproxy.cfg" do
   notifies :restart, resources(:service => "haproxy"), :immediately
 end
 
-# *-*-*-*-* TO BE REPLACED WITH OPENSTACK-HA *-*-*-*-*
-
-ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
-# ks_service_endpoint = get_access_endpoint("keystone", "keystone", "service-api")
-keystone = get_settings_by_role("keystone","keystone")
-haproxy_ip = get_ip_for_net("public", node)
-
-node['openstack']['services'].each do |s|
-  role, svc, ns, svc_type = s["role"], s["service"], s["namespace"], s["service_type"]
-#
-#   # fudgy for now to make the endpoint IP be this haproxy node ip
-#   # if we have not passed one in in the environment
-
-  unless node[ns]["services"][svc].keys.include?("host")
-    Chef::Log.info("setting #{ns}:#{svc} endpoint to #{haproxy_ip}")
-    node.set[ns]["services"][svc]["host"] = haproxy_ip
-  end
-
-  if node[ns]["services"][svc].has_key? "host"
-
-    # get the proper bind IPs
-    case svc_type
-    when "ec2"
-      public_endpoint = get_env_bind_endpoint("nova", "ec2-public")
-      admin_endpoint = get_env_bind_endpoint("nova", "ec2-admin")
-    when "identity"
-      public_endpoint = get_env_bind_endpoint("keystone", "service-api")
-      admin_endpoint = get_env_bind_endpoint("keystone", "admin-api")
-    else
-      public_endpoint = get_env_bind_endpoint(ns, svc)
-      admin_endpoint = get_env_bind_endpoint(ns, svc)
-    end
-
-    listen_ip = node[ns]["services"][svc]["host"]
-    listen_port = rcb_safe_deref(node, "#{ns}.services.#{svc}.port") ? node[ns]["services"][svc]["port"] : get_realserver_endpoints(role, ns, svc)[0]["port"]
-    rs_list = get_realserver_endpoints(role, ns, svc).each.inject([]) { |output,x| output << {"ip" => x["host"], "port" => x["port"]} }
-
-    haproxy_virtual_server "#{ns}-#{svc}" do
-      vs_listen_ip listen_ip
-      vs_listen_port listen_port.to_s
-      real_servers rs_list
-    end
-
-    keystone_register "Recreate Endpoint" do
-      auth_host ks_admin_endpoint["host"]
-      auth_port ks_admin_endpoint["port"]
-      auth_protocol ks_admin_endpoint["scheme"]
-      api_ver ks_admin_endpoint["path"]
-      auth_token keystone["admin_token"]
-      service_type svc_type
-      endpoint_region node["nova"]["compute"]["region"]
-      endpoint_adminurl admin_endpoint["uri"]
-      endpoint_internalurl public_endpoint["uri"]
-      endpoint_publicurl public_endpoint["uri"]
-      action :recreate_endpoint
-    end
-  end
-end
-
 #### to add an individual service config:
 #NOTE(mancdaz): move this into doc
 
