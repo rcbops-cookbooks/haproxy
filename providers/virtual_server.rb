@@ -21,7 +21,7 @@
 action :create do
   name = new_resource.name.match('ec2') ? "ec2-api" : new_resource.name
 
-  template "/etc/haproxy/haproxy.d/vs_#{name}.cfg" do
+  r = template "/etc/haproxy/haproxy.d/vs_#{name}.cfg" do
     source "vs_generic.cfg.erb"
     cookbook "haproxy"
     owner "root"
@@ -36,5 +36,5 @@ action :create do
     )
     notifies :restart, resources(:service => "haproxy"), :delayed
   end
-  new_resource.updated_by_last_action(true)
+  new_resource.updated_by_last_action(r.updated_by_last_action?)
 end
