@@ -21,7 +21,7 @@ action :create do
 
   servers = new_resource.servers
 
-  template getPath do
+  r = template getPath do
   source "haproxy-new.cfg.erb"
   owner "root"
   group "root"
@@ -32,7 +32,7 @@ action :create do
       :servers => servers,
       :listen_port => new_resource.listen_port)
   end
-  new_resource.updated_by_last_action(true)
+  new_resource.updated_by_last_action(r.updated_by_last_action?)
 end
 
 

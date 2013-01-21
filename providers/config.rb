@@ -38,7 +38,7 @@ action :create do
     log(server_list)
     servers = server_list.each.inject([]) {|output, k| output << [k['host'],k['port']].join(":") }
 
-    template getPath do
+    r = template getPath do
       source "haproxy-new.cfg.erb"
       owner "root"
       group "root"
@@ -49,7 +49,7 @@ action :create do
         :servers => servers,
         :listen_port => listen_port)
     end
-    new_resource.updated_by_last_action(true)
+    new_resource.updated_by_last_action(r.updated_by_last_action?)
   else
     new_resource.updated_by_last_action(false)
   end
