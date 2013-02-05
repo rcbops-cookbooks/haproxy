@@ -34,8 +34,8 @@ declare -a config_files
 # add everything under $CONFIG_DIR
 if [ -d ${CONFIG_DIR} ] ; then
     for i in $(ls "${CONFIG_DIR}") ; do
-        i=$(readlink -f "${i}")
-        config_files=("-f" "${i}" "${config_files[@]}")
+        conf="${CONFIG_DIR}/${i}"
+        config_files=("-f" "${conf}" "${config_files[@]}")
     done
 fi
 
