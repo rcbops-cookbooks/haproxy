@@ -58,6 +58,8 @@ service "haproxy" do
   service_name platform_options["haproxy_service"]
   supports :status => true, :restart => true, :status => true, :reload => true
   action [ :enable, :start ]
+  retries 5
+  retry_delay 2
 end
 
 template "/etc/haproxy/haproxy.cfg" do
