@@ -57,12 +57,14 @@ when "fedora", "redhat", "centos"
   default["haproxy"]["platform"] = {
     "haproxy_packages" => [ "haproxy" ],
     "haproxy_service" => "haproxy",
+    "haproxy_process_name" => "haproxy",
     "package_options" => ""
   }
 when "ubuntu", "debian"
   default["haproxy"]["platform"] = {
     "haproxy_packages" => [ "haproxy" ],
     "haproxy_service" => "haproxy",
+    "haproxy_process_name" => "haproxy",
     "package_options" => "--force-yes -o Dpkg::Options::='--force-confold' -o Dpkg::Options::='--force-confdef'"
   }
 end
