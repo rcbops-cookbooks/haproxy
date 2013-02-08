@@ -8,6 +8,6 @@ version           "1.0.4"
   supports os
 end
 
-%w{ nova swift apt osops-utils yum keystone monitoring }.each do |dep|
+%w{ apt keystone monitoring nova osops-utils swift yum }.each do |dep|
   depends dep
 end
