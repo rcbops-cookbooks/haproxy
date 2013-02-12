@@ -34,12 +34,12 @@ Virtual Servers
 
 ### Example
 
-haproxy_virtual_server "web" do
-  lb_algo        "leastconn"
-  vs_listen_ip   "192.168.100.10"
-  vs_listen_port "80"
-  real_servers   [{"ip" => "192.168.100.11", "port" => "80"}, {"ip" => "192.168.100.12", "port" => "80}]
-end
+    haproxy_virtual_server "web" do
+      lb_algo        "leastconn"
+      vs_listen_ip   "192.168.100.10"
+      vs_listen_port "80"
+      real_servers   [{"ip" => "192.168.100.11", "port" => "80"}, {"ip" => "192.168.100.12", "port" => "80}]
+    end
 
 Recipes
 =======
@@ -55,7 +55,7 @@ Data Bags
 Attributes 
 ==========
 
-* `haproxy["admin_port"] - Admin port for haproxy statistics
+* `haproxy["admin_port"]` - Admin port for haproxy statistics
 
 Templates
 =========
