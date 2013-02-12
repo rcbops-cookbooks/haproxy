@@ -14,7 +14,7 @@ Platform
 --------
 
 * CentOS >= 6.3
-* Ubuntu-12.04
+* Ubuntu >= 12.04
 
 Cookbooks
 ---------
