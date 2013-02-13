@@ -58,10 +58,12 @@ end
 
 service "haproxy" do
   service_name platform_options["haproxy_service"]
-  supports :status => true, :restart => true, :status => true, :reload => true
-  action [ :enable, :start ]
+  supports :status => true, :restart => true, :reload => true
+  unless node["roles"].include?("ha-controller2")
+    action [ :enable, :start ]
+  end
   retries 5
-  retry_delay 2
+  retry_delay 5
 end
 
 template "/etc/haproxy/haproxy.cfg" do
