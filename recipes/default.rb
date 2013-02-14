@@ -18,9 +18,17 @@
 # limitations under the License.
 #
 
+::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
+
 include_recipe "monitoring"
 
 platform_options = node["haproxy"]["platform"]
+
+if node["developer_mode"]
+  node.set_unless["haproxy"]["admin_password"] = "password"
+else 
+  node.set_unless["haproxy"]["admin_password"] = secure_password
+end
 
 platform_options["haproxy_packages"].each do |pkg|
   package pkg do
@@ -72,7 +80,8 @@ template "/etc/haproxy/haproxy.cfg" do
   group "root"
   mode 0644
   variables(
-    "admin_port" => node["haproxy"]["admin_port"]
+    "admin_port"     => node["haproxy"]["admin_port"], 
+    "admin_password" => node["haproxy"]["admin_password"]
   )
   notifies :restart, resources(:service => "haproxy"), :immediately
 end
