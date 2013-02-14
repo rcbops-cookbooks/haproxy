@@ -30,8 +30,7 @@ listen stats 0.0.0.0:<%= @admin_port %>
         stats show-node
         stats show-legends
         stats realm HAProxy\ Statistics
-	#FIXME(shep): this probably needs to be templated out with dev_mode
-        stats auth admin:password
+        stats auth admin:<%= @admin_password %>
         stats admin if TRUE
 
 # TODO(shep): Here is where we do the clever part and loop over the roles we
