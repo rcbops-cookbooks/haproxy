@@ -23,6 +23,7 @@ The following cookbooks are dependencies:
 
 * apt
 * monitoring
+* openssl
 * osops-utils
 * yum
 
@@ -41,6 +42,8 @@ Virtual Servers
       real_servers   [{"ip" => "192.168.100.11", "port" => "80"}, {"ip" => "192.168.100.12", "port" => "80}]
     end
 
+`lb_algo` options are `roundrobin`, `leastconn`, defaults to `roundrobin`
+
 Recipes
 =======
 
@@ -55,7 +58,8 @@ Data Bags
 Attributes 
 ==========
 
-* `haproxy["admin_port"]` - Admin port for haproxy statistics
+* `haproxy["admin_port"]` - Admin port for haproxy statistics page
+* `haproxy["admin_password"]` - Admin password for haproxy statistics page (defaults to `password` when `node["developer_mode"] = true`)
 
 Templates
 =========
