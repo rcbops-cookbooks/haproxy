@@ -1,4 +1,5 @@
 listen  <%= @name %> <%= @vs_listen_ip %>:<%= @vs_listen_port %>
+    mode <%= @mode %>
     balance <%= @lb_algo %>
     option forwardfor
 <% @real_servers.each_with_index do |s, i| %>
