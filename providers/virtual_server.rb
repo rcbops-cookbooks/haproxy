@@ -32,6 +32,7 @@ action :create do
         "vs_listen_ip" => new_resource.vs_listen_ip,
         "vs_listen_port" => new_resource.vs_listen_port,
         "lb_algo" => new_resource.lb_algo,
+        "mode" => new_resource.mode,
         "real_servers" => new_resource.real_servers
     )
     notifies :restart, resources(:service => "haproxy"), :delayed
