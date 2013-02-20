@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: openstack-haproxy
-# w
+# Cookbook Name:: haproxy
+#
 # Recipe:: default
 #
 # Copyright 2012, Rackspace US, Inc.
@@ -26,7 +26,7 @@ platform_options = node["haproxy"]["platform"]
 
 if node["developer_mode"]
   node.set_unless["haproxy"]["admin_password"] = "password"
-else 
+else
   node.set_unless["haproxy"]["admin_password"] = secure_password
 end
 
@@ -67,9 +67,7 @@ end
 service "haproxy" do
   service_name platform_options["haproxy_service"]
   supports :status => true, :restart => true, :reload => true
-  unless node["roles"].include?("ha-controller2")
-    action [ :enable, :start ]
-  end
+  action [ :enable, :start ]
   retries 5
   retry_delay 5
 end
@@ -80,7 +78,7 @@ template "/etc/haproxy/haproxy.cfg" do
   group "root"
   mode 0644
   variables(
-    "admin_port"     => node["haproxy"]["admin_port"], 
+    "admin_port"     => node["haproxy"]["admin_port"],
     "admin_password" => node["haproxy"]["admin_password"]
   )
   notifies :restart, resources(:service => "haproxy"), :immediately
