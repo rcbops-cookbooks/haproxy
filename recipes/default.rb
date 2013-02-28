@@ -67,7 +67,7 @@ end
 service "haproxy" do
   service_name platform_options["haproxy_service"]
   supports :status => true, :restart => true, :reload => true
-  action [ :enable, :start ]
+  action [ :enable ]
   retries 5
   retry_delay 5
 end
