@@ -65,9 +65,9 @@ cookbook_file "/etc/init.d/haproxy" do
 end
 
 service "haproxy" do
-  service_name platform_options["haproxy_service"]
+  service_name platform_ -aptions["haproxy_service"]
   supports :status => true, :restart => true, :reload => true
-  action [ :enable, :start ]
+  action :nothing
   retries 5
   retry_delay 5
 end
@@ -82,6 +82,7 @@ template "/etc/haproxy/haproxy.cfg" do
     "admin_password" => node["haproxy"]["admin_password"]
   )
   notifies :restart, resources(:service => "haproxy"), :immediately
+  notifies :enable, resources(:service => "haproxy"), :immediately
 end
 
 monitoring_procmon "haproxy" do
