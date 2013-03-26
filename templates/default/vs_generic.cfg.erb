@@ -7,5 +7,5 @@ listen  <%= @name %> <%= @vs_listen_ip %>:<%= @vs_listen_port %>
 <% end %>
 <% end %>
 <% @real_servers.each_with_index do |s, i| %>
-    server <%= "#{@name}-#{i+1} #{s['ip']}:#{s['port']}" %> check
+    server <%= "#{@name}-#{i+1} #{s}" %> check
 <% end %>
