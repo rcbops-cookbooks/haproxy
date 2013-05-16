@@ -8,6 +8,6 @@ version           "1.0.6"
   supports os
 end
 
-%w{ apt monitoring openssl osops-utils yum }.each do |dep|
+%w{ apt openssl osops-utils yum }.each do |dep|
   depends dep
 end
