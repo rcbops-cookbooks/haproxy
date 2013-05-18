@@ -38,7 +38,6 @@ Cookbooks
 The following cookbooks are dependencies:
 
 * apt
-* monitoring
 * openssl
 * osops-utils
 * yum
