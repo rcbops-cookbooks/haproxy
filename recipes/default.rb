@@ -22,11 +22,19 @@
 
 platform_options = node["haproxy"]["platform"]
 
+haproxy_nodes = get_settings_by_role('openstack-ha', 'haproxy', includeme = false)
+
 if node["developer_mode"]
-  node.set_unless["haproxy"]["admin_password"] = "password"
+  password = 'password'
 else
-  node.set_unless["haproxy"]["admin_password"] = secure_password
+  begin
+    password = haproxy_nodes['admin_password']
+  rescue NoMethodError
+    password = secure_password
+  end
 end
+
+node.set_unless["haproxy"]["admin_password"] = password
 
 platform_options["haproxy_packages"].each do |pkg|
   package pkg do
