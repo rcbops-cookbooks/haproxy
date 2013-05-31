@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: haproxy
-# Resource:: config
+# Resource:: configsingle
 #
 # Copyright 2012, Rackspace US, Inc.
 #

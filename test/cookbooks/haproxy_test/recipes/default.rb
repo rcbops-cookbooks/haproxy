@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: haproxy
-# Resource:: config
+# Cookbook Name:: haproxy_test
+# Recipe:: default
 #
 # Copyright 2012, Rackspace US, Inc.
 #
@@ -17,15 +17,4 @@
 # limitations under the License.
 #
 
-actions :create, :delete
-
-# In earlier versions of Chef the LWRP DSL doesn't support specifying
-# a default action, so you need to drop into Ruby.
-def initialize(*args)
-  super
-  @action = :create
-end
-
-attribute :role, :kind_of => String
-attribute :namespace, :kind_of => String
-attribute :service, :kind_of => String
+include_recipe "haproxy::default"

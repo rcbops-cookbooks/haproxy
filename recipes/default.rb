@@ -1,6 +1,5 @@
 #
 # Cookbook Name:: haproxy
-#
 # Recipe:: default
 #
 # Copyright 2012, Rackspace US, Inc.
@@ -22,11 +21,12 @@
 
 platform_options = node["haproxy"]["platform"]
 
-haproxy_nodes = get_settings_by_role('openstack-ha', 'haproxy', includeme = false)
-
 if node["developer_mode"]
   password = 'password'
 else
+  haproxy_nodes =
+    get_settings_by_role('openstack-ha', 'haproxy', includeme = false)
+
   begin
     password = haproxy_nodes['admin_password']
   rescue NoMethodError
@@ -48,7 +48,7 @@ template "/etc/default/haproxy" do
   owner "root"
   group "root"
   mode 0644
-  only_if { platform?("ubuntu","debian") }
+  only_if { platform_family?("debian") }
 end
 
 directory "/etc/haproxy/haproxy.d" do
@@ -58,11 +58,11 @@ directory "/etc/haproxy/haproxy.d" do
 end
 
 cookbook_file "/etc/init.d/haproxy" do
-  if platform?(%w{fedora redhat centos})
+  if platform_family?("rhel")
     source "haproxy-init-rhel"
   end
-  if platform?(%w{ubuntu debian})
-   source "haproxy-init-ubuntu"
+  if platform_family?("debian")
+    source "haproxy-init-ubuntu"
   end
 
   mode 0655
@@ -73,7 +73,7 @@ end
 service "haproxy" do
   service_name platform_options["haproxy_service"]
   supports :status => true, :restart => true, :reload => true
-  action [ :enable ]
+  action [:enable]
   retries 5
   retry_delay 5
 end
@@ -87,26 +87,5 @@ template "/etc/haproxy/haproxy.cfg" do
     "admin_port"     => node["haproxy"]["admin_port"],
     "admin_password" => node["haproxy"]["admin_password"]
   )
-  notifies :restart, resources(:service => "haproxy"), :immediately
+  notifies :restart, "service[haproxy]", :immediately
 end
-
-#### to add an individual service config:
-#NOTE(mancdaz): move this into doc
-
-#haproxy_configsingle "ec2-api" do
-#  action :create
-#  servers(
-#      "foo1" => {"host" => "1.2.3.4", "port" => "8774"},
-#      "foo2" => {"host" => "5.6.7.8", "port" => "8774"}
-#  )
-#  listen "0.0.0.0"
-#  listen_port "4568"
-#  notifies :restart, resources(:service => "haproxy"), :immediately
-#end
-
-#### to delete an individual service config
-
-#haproxy_config "some-api" do
-#  action :delete
-#  notifies :restart, resources(:service => "haproxy"), :immediately
-#end
