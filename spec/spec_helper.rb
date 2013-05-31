@@ -18,7 +18,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 berks = Berkshelf::Berksfile.from_file(File.join(TOPDIR, "Berksfile"))
 tmpdirname = Dir.mktmpdir("chefspec-berks")
-berks.install(path: tmpdirname)
+berks.install(:path => tmpdirname)
 COOKBOOK_PATH = tmpdirname
 
 RSpec.configure do |c|
