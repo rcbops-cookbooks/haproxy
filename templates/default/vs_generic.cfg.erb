@@ -1,4 +1,4 @@
-listen  <%= @name %> <%= @vs_listen_ip %>:<%= @vs_listen_port %>
+listen <%= @name %> <%= @vs_listen_ip %>:<%= @vs_listen_port %>
     mode <%= @mode %>
     balance <%= @lb_algo %>
 <% unless @options.nil? %>

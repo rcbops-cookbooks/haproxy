@@ -28,7 +28,8 @@ end
 
 attribute :vs_listen_ip, :kind_of => String, :required => true
 attribute :vs_listen_port, :kind_of => String, :required => true
-attribute :lb_algo, :kind_of => String, :equal_to => ["roundrobin", "leastconn", "source"], :default => "roundrobin"
+attribute :lb_algo, :kind_of => String,
+  :equal_to => ["roundrobin", "leastconn", "source"], :default => "roundrobin"
 attribute :real_servers, :kind_of => Array, :required => true
 attribute :mode, :kind_of => String, :default => "http"
 attribute :options, :kind_of => Array
