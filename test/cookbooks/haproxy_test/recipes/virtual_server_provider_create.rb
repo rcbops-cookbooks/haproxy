@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: haproxy
-# Resource:: config
+# Cookbook Name:: haproxy_test
+# Recipe:: virtual_server_provider_create
 #
 # Copyright 2012, Rackspace US, Inc.
 #
@@ -17,15 +17,13 @@
 # limitations under the License.
 #
 
-actions :create, :delete
+include_recipe "haproxy::default"
 
-# In earlier versions of Chef the LWRP DSL doesn't support specifying
-# a default action, so you need to drop into Ruby.
-def initialize(*args)
-  super
-  @action = :create
+haproxy_virtual_server "myserver" do
+  vs_listen_ip "127.0.0.1"
+  vs_listen_port "8080"
+  lb_algo "leastconn"
+  mode "https"
+  options ["a", "b"]
+  real_servers ["10.10.10.10", "10.10.10.11"]
 end
-
-attribute :role, :kind_of => String
-attribute :namespace, :kind_of => String
-attribute :service, :kind_of => String

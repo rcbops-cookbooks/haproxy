@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: haproxy
-# Provider:: config
+# Provider:: configsingle
 #
 # Copyright 2012, Rackspace US, Inc.
 #
@@ -18,18 +18,23 @@
 #
 
 action :create do
+  Chef::Log.warn("haproxy_configsingle is deprecated" +
+    " and will be removed in a future release")
 
   servers = new_resource.servers
 
-  r = template getPath do
-  source "haproxy-new.cfg.erb"
-  owner "root"
-  group "root"
-  mode "0644"
+  r = template get_path do
+    cookbook "haproxy"
+    source "haproxy-new.cfg.erb"
+    owner "root"
+    group "root"
+    mode "0644"
     variables(
       :name => new_resource.name,
       :listen => new_resource.listen,
-      :servers => servers,
+      :servers => servers.values.map do |value|
+        value["host"] + ":" + value["port"]
+      end,
       :listen_port => new_resource.listen_port)
   end
   new_resource.updated_by_last_action(r.updated_by_last_action?)
@@ -37,13 +42,17 @@ end
 
 
 action :delete do
-  file getPath do
+  Chef::Log.warn("haproxy_configsingle is deprecated" +
+    " and will be removed in a future release")
+
+  file get_path do
     action :delete
   end
   new_resource.updated_by_last_action(true)
 end
 
 private
-def getPath
+
+def get_path
   return "/etc/haproxy/haproxy.d/#{new_resource.name}.cfg"
 end

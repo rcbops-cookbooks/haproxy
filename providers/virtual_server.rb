@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#
 
 action :create do
   name = new_resource.name.match('ec2') ? "ec2-api" : new_resource.name
@@ -28,15 +27,15 @@ action :create do
     group "root"
     mode "0644"
     variables(
-        "name" => name,
-        "vs_listen_ip" => new_resource.vs_listen_ip,
-        "vs_listen_port" => new_resource.vs_listen_port,
-        "lb_algo" => new_resource.lb_algo,
-        "mode" => new_resource.mode,
-        "real_servers" => new_resource.real_servers,
-        "options" => new_resource.options
+      "name" => name,
+      "vs_listen_ip" => new_resource.vs_listen_ip,
+      "vs_listen_port" => new_resource.vs_listen_port,
+      "lb_algo" => new_resource.lb_algo,
+      "mode" => new_resource.mode,
+      "real_servers" => new_resource.real_servers,
+      "options" => new_resource.options
     )
-    notifies :restart, resources(:service => "haproxy"), :delayed
+    notifies :restart, "service[haproxy]", :delayed
   end
   new_resource.updated_by_last_action(r.updated_by_last_action?)
 end

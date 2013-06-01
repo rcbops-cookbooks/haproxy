@@ -1,4 +1,4 @@
-listen  <%= @name %> <%= @listen %>:<%= @listen_port %>
+listen <%= @name %> <%= @listen %>:<%= @listen_port %>
     balance leastconn
     option forwardfor
 <% @servers.each_with_index do |server, idx| %>

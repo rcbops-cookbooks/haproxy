@@ -16,9 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#
 
 action :create do
+  Chef::Log.warn(
+    "haproxy_config is deprecated and will be removed in a future release")
+
   if new_resource.service == "ec2-admin" or new_resource.service == "ec2-public"
     name = "ec2-api"
   else
@@ -36,10 +38,13 @@ action :create do
     servers = {}
     server_list = get_realserver_endpoints(role, namespace, service)
     log(server_list)
-    servers = server_list.each.inject([]) {|output, k| output << [k['host'],k['port']].join(":") }
+    servers = server_list.each.inject([]) do |output, k|
+      output << [k['host'], k['port']].join(":")
+    end
 
-    r = template getPath do
+    r = template get_path do
       source "haproxy-new.cfg.erb"
+      cookbook "haproxy"
       owner "root"
       group "root"
       mode "0644"
@@ -56,14 +61,18 @@ action :create do
 end
 
 action :delete do
-  file getPath do
+  Chef::Log.warn(
+    "haproxy_config is deprecated and will be removed in a future release")
+
+  file get_path do
     action :delete
   end
   new_resource.updated_by_last_action(true)
 end
 
 private
-def getPath
+
+def get_path
   if new_resource.service == "ec2-admin" or new_resource.service == "ec2-public"
     return "/etc/haproxy/haproxy.d/ec2-api.cfg"
   else
