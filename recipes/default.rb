@@ -81,7 +81,7 @@ template "/etc/haproxy/haproxy.cfg" do
     "admin_port"     => node["haproxy"]["admin_port"],
     "admin_password" => node["haproxy"]["admin_password"]
   )
-  notifies :restart, resources(:service => "haproxy"), :immediately
+  notifies :restart, "service[haproxy]", :immediately
 end
 
 monitoring_procmon "haproxy" do
