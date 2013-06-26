@@ -21,7 +21,7 @@
 
 platform_options = node["haproxy"]["platform"]
 
-if node["developer_mode"]
+if node["developer_mode"] == true
   password = 'password'
 else
   haproxy_nodes =
