@@ -1,3 +1,4 @@
+name              "haproxy"
 maintainer        "Rackspace US, Inc."
 license           "Apache 2.0"
 description       "Installs and configures haproxy for use in an Openstack deployment"
