@@ -36,7 +36,7 @@ action :create do
         "real_servers" => new_resource.real_servers,
         "options" => new_resource.options
     )
-    notifies :restart, resources(:service => "haproxy"), :delayed
+    notifies :restart, "service[haproxy]", :delayed
   end
   new_resource.updated_by_last_action(r.updated_by_last_action?)
 end

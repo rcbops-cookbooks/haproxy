@@ -24,7 +24,7 @@ include_recipe "monitoring"
 
 platform_options = node["haproxy"]["platform"]
 
-if node["developer_mode"]
+if node["developer_mode"] == true
   node.set_unless["haproxy"]["admin_password"] = "password"
 else
   node.set_unless["haproxy"]["admin_password"] = secure_password
@@ -81,7 +81,7 @@ template "/etc/haproxy/haproxy.cfg" do
     "admin_port"     => node["haproxy"]["admin_port"],
     "admin_password" => node["haproxy"]["admin_password"]
   )
-  notifies :restart, resources(:service => "haproxy"), :immediately
+  notifies :restart, "service[haproxy]", :immediately
 end
 
 monitoring_procmon "haproxy" do
