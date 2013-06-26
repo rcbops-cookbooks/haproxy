@@ -24,7 +24,7 @@ include_recipe "monitoring"
 
 platform_options = node["haproxy"]["platform"]
 
-if node["developer_mode"]
+if node["developer_mode"] == true
   node.set_unless["haproxy"]["admin_password"] = "password"
 else
   node.set_unless["haproxy"]["admin_password"] = secure_password
