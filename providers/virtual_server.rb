@@ -33,6 +33,7 @@ action :create do
       "lb_algo" => new_resource.lb_algo,
       "mode" => new_resource.mode,
       "real_servers" => new_resource.real_servers,
+      "active_backup" => new_resource.active_backup,
       "options" => new_resource.options
     )
     notifies :restart, "service[haproxy]", :delayed

@@ -7,5 +7,5 @@ listen <%= @name %> <%= @vs_listen_ip %>:<%= @vs_listen_port %>
 <% end %>
 <% end %>
 <% @real_servers.each_with_index do |s, i| %>
-    server <%= "#{@name}-#{i+1} #{s}" %> check
+    server <%= "#{@name}-#{i+1} #{s}" %> check <% if i > 0 and @active_backup %>backup<% end %>
 <% end %>
