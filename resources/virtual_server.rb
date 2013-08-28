@@ -33,3 +33,4 @@ attribute :lb_algo, :kind_of => String,
 attribute :real_servers, :kind_of => Array, :required => true
 attribute :mode, :kind_of => String, :default => "http"
 attribute :options, :kind_of => Array
+attribute :active_backup, :kind_of => [TrueClass,FalseClass], :default => false
