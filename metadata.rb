@@ -4,7 +4,7 @@ maintainer_email  "rcb-deploy@lists.rackspace.com"
 license           "Apache 2.0"
 description       "Installs and configures haproxy"
 long_description  IO.read(File.join(File.dirname(__FILE__), "README.md"))
-version           "1.0.6"
+version           "4.1.2"
 
 %w{ amazon centos debian fedora oracle redhat scientific ubuntu }.each do |os|
   supports os
