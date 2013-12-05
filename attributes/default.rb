@@ -24,7 +24,7 @@ if platform_family?("rhel")
   default["haproxy"]["platform"] = {
     "haproxy_packages" => ["haproxy"],
     "haproxy_service" => "haproxy",
-    "haproxy_process_name" => "haproxy",
+    "haproxy_process_name" => '^/usr/sbin/haproxy\b',
     "service_bin" => "/sbin/service",
     "package_options" => ""
   }
@@ -32,7 +32,7 @@ elsif platform_family?("debian")
   default["haproxy"]["platform"] = {
     "haproxy_packages" => ["haproxy"],
     "haproxy_service" => "haproxy",
-    "haproxy_process_name" => "haproxy",
+    "haproxy_process_name" => '^/usr/sbin/haproxy\b',
     "service_bin" => "/usr/sbin/service",
     "package_options" => "--force-yes" +
       " -o Dpkg::Options::='--force-confold'" +
