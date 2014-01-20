@@ -1,5 +1,6 @@
 global
-    log 127.0.0.1 local1 notice
+    log /dev/log local0
+    log /dev/log local1 notice
     maxconn 4096
     #chroot /usr/share/haproxy
     user haproxy
@@ -30,6 +31,3 @@ listen stats 0.0.0.0:<%= @admin_port %>
         stats realm HAProxy\ Statistics
         stats auth admin:<%= @admin_password %>
         stats admin if TRUE
-
-# TODO(shep): Here is where we do the clever part and loop over the roles we
-#   want to loadbalance.. and dynamically generate the config.
