@@ -20,6 +20,13 @@
 default["haproxy"]["admin_port"] = 8040
 default["haproxy"]["services"]["api"]["host"] = ""       # node_attribute
 
+default["haproxy"]["global_maxconn"] = 4096
+default["haproxy"]["defaults_retries"] = 3
+default["haproxy"]["defaults_maxconn"] = 2000
+default["haproxy"]["defaults_contimeout"] = 5000
+default["haproxy"]["defaults_clitimeout"] = 70000
+default["haproxy"]["defaults_srvtimeout"] = 70000
+
 if platform_family?("rhel")
   default["haproxy"]["platform"] = {
     "haproxy_packages" => ["haproxy"],

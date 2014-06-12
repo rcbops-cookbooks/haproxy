@@ -1,7 +1,7 @@
 global
     log /dev/log local0
     log /dev/log local1 notice
-    maxconn 4096
+    maxconn <%= @global_maxconn %>
     #chroot /usr/share/haproxy
     user haproxy
     group haproxy
@@ -14,12 +14,12 @@ defaults
     log global
     mode http
     option dontlognull
-    retries 3
+    retries <%= @defaults_retries %>
     option redispatch
-    maxconn 2000
-    contimeout 5000
-    clitimeout 50000
-    srvtimeout 50000
+    maxconn <%= @defaults_maxconn %>
+    contimeout <%= @defaults_contimeout %>
+    clitimeout <%= @defaults_clitimeout %>
+    srvtimeout <%= @defaults_srvtimeout %>
 
 
 listen stats 0.0.0.0:<%= @admin_port %>
