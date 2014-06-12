@@ -85,7 +85,13 @@ template "/etc/haproxy/haproxy.cfg" do
   mode 0644
   variables(
     "admin_port"     => node["haproxy"]["admin_port"],
-    "admin_password" => node["haproxy"]["admin_password"]
+    "admin_password" => node["haproxy"]["admin_password"],
+    "global_maxconn" => node["haproxy"]["global_maxconn"],
+    "defaults_retries" => node["haproxy"]["defaults_retries"],
+    "defaults_maxconn" => node["haproxy"]["defaults_maxconn"],
+    "defaults_contimeout" => node["haproxy"]["defaults_contimeout"],
+    "defaults_clitimeout" => node["haproxy"]["defaults_clitimeout"],
+    "defaults_srvtimeout" => node["haproxy"]["defaults_srvtimeout"]
   )
   notifies :restart, "service[haproxy]", :immediately
 end
